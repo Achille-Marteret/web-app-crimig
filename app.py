@@ -54,8 +54,17 @@ st.markdown("""
 
 # ======================================= Chargement des données ============================== #
 @st.cache_data
+@st.cache_data
 def load_data():
-    df = pd.read_csv("IRIS_FRANCE_METRO.csv")
+    import os
+    if os.path.exists("IRIS_FRANCE_METRO.xlsx"):
+        df = pd.read_excel("IRIS_FRANCE_METRO.xlsx", engine="openpyxl")
+    else:
+        # Essaie virgule puis point-virgule
+        try:
+            df = pd.read_csv("IRIS_FRANCE_METRO.csv", sep=",", encoding="utf-8")
+        except Exception:
+            df = pd.read_csv("IRIS_FRANCE_METRO.csv", sep=";", encoding="utf-8")
     df['CODE_DEPT'] = df['CODDEP'].apply(lambda x: str(x).zfill(2) if str(x).isdigit() else str(x))
     return df
 
